@@ -23,20 +23,20 @@ client.connect(err => {
     })
   })
 
-   app.get('/:id', (req, res) => {
+  app.get('/:id', (req, res) => {
     const id = ObjectID(req.params.id);
-  
+
     collection.findOne({ _id: id }, (err, result) => {
-       if (err) {
-         console.log(err);
-       } else {
-         res.send(result);
-       }    
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     });
   })
 
 
-  app.post('/addProducts', (req, res) => {
+  app.post('/addProduct', (req, res) => {
     const newEvent = req.body;
     console.log('adding new event: ', newEvent)
     collection.insertOne(newEvent)
@@ -45,13 +45,32 @@ client.connect(err => {
         res.send(result.insertedCount > 0)
       })
   })
+
   app.delete('/deleteProduct/:id', (req, res) => {
-    collection.deleteOne({_id:  ObjectID(req.params.id)})
-    .then( result => {
+    collection.deleteOne({ _id: ObjectID(req.params.id) })
+      .then(result => {
         res.send(result.deletedCount > 0)
         // console.log(result);
+      })
+  })
+
+  app.put('/updateProduct/:id', (req, res) => {
+
+    console.log(req.body);
+    const item = {
+      
+      time: new Date().toLocaleString()
+    }
+
+    collection.findOneAndUpdate({ _id: ObjectID(req.params.id) },{$set:item}, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.send(result);
+      }
     })
-})
+      
+  })
 });
 
 app.listen(port, () => {
